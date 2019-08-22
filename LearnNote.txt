@@ -1,0 +1,16 @@
+1.环境的搭建和统一返回体
+	Result<T>:统一返回类型
+	ErrorCodeMsg:统一返回错误
+	ResultTestController:测试返回成功和失败的结果
+
+2.集成thymeleaf模板
+	依赖不能少，application.properties 配置信息
+	去掉@ResponseBody 返回string类型 的模板名称即可
+	import org.springframework.ui.Model;
+	
+3.集成mybatis和druid数据源
+	依赖不能少，application.properties 配置信息
+	复制粘贴的要注意修改ip地址
+	需要注意的几个点：mybatis.type-aliases-package=com.learn.miaosha.entity 扫描的是实体
+					下换线转驼峰命名：mybatis.configuration.map-underscore-to-camel-case=true
+					注意service层@Service  dao层的@Mapper	  
