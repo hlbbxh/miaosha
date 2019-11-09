@@ -20,6 +20,8 @@ public class ErrorCodeMsg {
 	public static ErrorCodeMsg ERROR_PARM = new ErrorCodeMsg(5000004,"参数错误");
 	public static ErrorCodeMsg PHONE_NOTFOUND = new ErrorCodeMsg(5000005,"手机号码不存在");
 	public static ErrorCodeMsg PASSWORD_ERROR = new ErrorCodeMsg(5000006,"密码错误");
+	public static ErrorCodeMsg BIND_ERROR = new ErrorCodeMsg(5000007,"参数检验异常：%s");//参数 java String.format 方法
+
 	//商品模块 5003XX
 	
 	//订单模块 5004XX
@@ -46,6 +48,22 @@ public class ErrorCodeMsg {
 
 	public void setMsg(String msg) {
 		this.msg = msg;
+	}
+
+	//异常处理机制 那边jsr303的异常校验打印
+	public ErrorCodeMsg fillArgs(Object...args) {
+		int code = this.code;
+		//字符串类型 格式化字符串类型
+		String messgaes = String.format(this.msg, args);
+		return new ErrorCodeMsg(code,messgaes);
+	}
+	
+	
+	@Override
+	public String toString() {
+		return "ErrorCodeMsg [code=" + code + ", msg=" + msg + ", getCode()=" + getCode() + ", getMsg()=" + getMsg()
+				+ ", getClass()=" + getClass() + ", hashCode()=" + hashCode() + ", toString()=" + super.toString()
+				+ "]";
 	}
 	
 }

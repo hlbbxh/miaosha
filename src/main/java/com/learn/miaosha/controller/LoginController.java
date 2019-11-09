@@ -38,21 +38,21 @@ public class LoginController {
     
     @RequestMapping("/do_login")
     @ResponseBody
-    public Result<Object> doLogin(HttpServletResponse response, @Valid LoginVo loginVo) {
+    public Result<Object> doLogin(HttpServletResponse response, @Valid LoginVo loginVo) {//jsr303 》》》第一步 加入注解
     	log.info(loginVo.toString());
     	//登录
     	//参数检验
     	String passinput = loginVo.getPassword();//密码
     	String mobString = loginVo.getMobile();//手机
-    	if(StringUtils.isEmpty(passinput)) {
-    		return Result.error(ErrorCodeMsg.PASSWORLD_EMPTY); //密码为空
-    	}
-    	if(StringUtils.isEmpty(mobString)) {
-    		return Result.error(ErrorCodeMsg.PHONE_EMPTY); //手机号为空
-    	}
-    	if(!ValidatorUtil.isMobile(mobString)) {
-    		return Result.error(ErrorCodeMsg.PHONE_ERROR); //手机号错误
-    	}
+		/*
+		 * if(StringUtils.isEmpty(passinput)) { return
+		 * Result.error(ErrorCodeMsg.PASSWORLD_EMPTY); //密码为空 }
+		 * if(StringUtils.isEmpty(mobString)) { return
+		 * Result.error(ErrorCodeMsg.PHONE_EMPTY); //手机号为空 }
+		 * if(!ValidatorUtil.isMobile(mobString)) { return
+		 * Result.error(ErrorCodeMsg.PHONE_ERROR); //手机号错误 }
+		 */
+    	//============================》加入了jsr303校验就可以不用判断这些东西了
     	//登录
     	ErrorCodeMsg loginCodemsg = miaoshaUserService.login(loginVo);
     	if(loginCodemsg.getCode()==200) {

@@ -91,7 +91,7 @@
 		    <version>3.6</version>
 		</dependency>
 		
-		<!-- 数据校验 -->
+		<!-- 数据校验  jsr303 校验-->
 		<dependency>
 	      <groupId>org.springframework.boot</groupId>
 	      <artifactId>spring-boot-starter-validation</artifactId>
