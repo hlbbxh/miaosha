@@ -19,7 +19,11 @@ public class GlobalExceptionHandler {
 	
 	@ExceptionHandler(value = Exception.class)//拦截那些异常
 	public Result<String> exceptionHandler(HttpServletRequest request,Exception e){
-		if(e instanceof BindException) {
+		if(e instanceof GlobalException) {
+			//捕获异常 自己定义的异常
+			GlobalException globalException =(GlobalException) e;
+			return Result.error(globalException.getErrorCodeMsg());
+		}else if(e instanceof BindException) {
 			BindException bindException = (BindException) e;//强制转换
 			List<ObjectError> errors = bindException.getAllErrors();//获取所有的异常
 			String defaultMessage = "";

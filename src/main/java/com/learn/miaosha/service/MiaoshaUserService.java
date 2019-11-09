@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.learn.miaosha.dao.MiaoshaUserDao;
 import com.learn.miaosha.entity.MiaoshaUser;
+import com.learn.miaosha.exception.GlobalException;
 import com.learn.miaosha.result.ErrorCodeMsg;
 import com.learn.miaosha.utils.MD5Util;
 import com.learn.miaosha.vo.LoginVo;
@@ -23,9 +24,10 @@ public class MiaoshaUserService {
 	}
 	
 	//数据校验层
-	public ErrorCodeMsg login(LoginVo loginVo) {
+	public Boolean login(LoginVo loginVo) {
 		if(null==loginVo) {
-			return ErrorCodeMsg.ERROR_PARM;//参数错误 参数为空
+			//return ErrorCodeMsg.ERROR_PARM;//参数错误 参数为空
+			throw new GlobalException(ErrorCodeMsg.ERROR_PARM);
 		}else{
 			String mobile = loginVo.getMobile();
 			String formPass = loginVo.getPassword();
@@ -38,12 +40,15 @@ public class MiaoshaUserService {
 				// 数据库的盐 加用户输入的密码
 				String calcPass = MD5Util.formPassToDBPass(formPass, saltDB);//计算数据库密码 
 				if(!calcPass.equals(dbPass)) {
-					return ErrorCodeMsg.PASSWORD_ERROR;//密码错误
+					//return ErrorCodeMsg.PASSWORD_ERROR;//密码错误
+					throw new GlobalException(ErrorCodeMsg.PASSWORD_ERROR);
 				}else {
-					return ErrorCodeMsg.SUCCESS;//成功了
+					//返回真正业务逻辑的部分
+					return true;
 				}
 			}else {
-				return ErrorCodeMsg.PHONE_NOTFOUND;//手机不存在
+				//return ErrorCodeMsg.PHONE_NOTFOUND;//手机不存在
+				throw new GlobalException(ErrorCodeMsg.PHONE_NOTFOUND);
 			}
 		}
 	}

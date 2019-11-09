@@ -54,12 +54,7 @@ public class LoginController {
 		 */
     	//============================》加入了jsr303校验就可以不用判断这些东西了
     	//登录
-    	ErrorCodeMsg loginCodemsg = miaoshaUserService.login(loginVo);
-    	if(loginCodemsg.getCode()==200) {
-    		return Result.success(true);
-    	}else {
-    		return Result.error(loginCodemsg);
-    	}
-    	
+    	Boolean login = miaoshaUserService.login(loginVo);//有异常已经抛出了 没有异常到这里就成功了
+    	return Result.success(true);
     }
 }
