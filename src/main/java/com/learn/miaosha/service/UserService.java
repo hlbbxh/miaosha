@@ -9,10 +9,14 @@ import com.learn.miaosha.entity.User;
 public class UserService {
 
 	@Autowired
-	UserDao userDao;
+	private UserDao userDao;
 	
 	public User getById(int id) {
 		return userDao.getById(id);
+	}
+	
+	public int insertUser(User user) {
+		return userDao.insert(user);
 	}
 
 }	

@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 /**
  * @author DELL
  * redis的对应属性文件 对应的实体 
- * ioc加载的时候会自动注入  对应上就可以了
+ * ioc加载的时候会自动注入  对应上就可以了  》》》这是第一步 读取配置文件的信息  配置文件的实体
  * 
  */
 @Component

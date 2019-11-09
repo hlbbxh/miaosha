@@ -3,6 +3,7 @@ package com.learn.miaosha.entity;
 public class User {
 	
 	private Integer userId;
+	
 	private String userName;
 	
 	public Integer getUserId() {

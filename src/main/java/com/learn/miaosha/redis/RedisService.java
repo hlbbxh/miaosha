@@ -8,22 +8,29 @@ import com.alibaba.fastjson.JSON;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
+/**
+ * @author DELL   redis操作方法   》》》333
+ *
+ */
 @Service
 public class RedisService {
 	
 	@Autowired
-	JedisPool jedisPool;
+	JedisPool jedisPool;//从这个里面
 	
 	/**
-	 * 获取当个对象
+	 * 获取当个对象 
 	 * */
 	public <T> T get(KeyPrefix prefix, String key,  Class<T> clazz) {
 		 Jedis jedis = null;
 		 try {
+			 //获取连接
 			 jedis =  jedisPool.getResource();
 			 //生成真正的key
 			 String realKey  = prefix.getPrefix() + key;
+			 // 获取 jedis 的字符串
 			 String  str = jedis.get(realKey);
+			 //转换对象的工具 
 			 T t =  stringToBean(str, clazz);
 			 return t;
 		 }finally {
@@ -44,6 +51,7 @@ public class RedisService {
 			 }
 			//生成真正的key
 			 String realKey  = prefix.getPrefix() + key;
+			 
 			 int seconds =  prefix.expireSeconds();
 			 if(seconds <= 0) {
 				 jedis.set(realKey, str);
@@ -65,6 +73,7 @@ public class RedisService {
 			 jedis =  jedisPool.getResource();
 			//生成真正的key
 			 String realKey  = prefix.getPrefix() + key;
+			 //判断是否存在
 			return  jedis.exists(realKey);
 		 }finally {
 			  returnToPool(jedis);
@@ -80,6 +89,7 @@ public class RedisService {
 			 jedis =  jedisPool.getResource();
 			//生成真正的key
 			 String realKey  = prefix.getPrefix() + key;
+			 //添加 123
 			return  jedis.incr(realKey);
 		 }finally {
 			  returnToPool(jedis);
@@ -87,24 +97,34 @@ public class RedisService {
 	}
 	
 	/**
-	 * 减少值
+	 * 减少值 1
 	 * */
 	public <T> Long decr(KeyPrefix prefix, String key) {
 		 Jedis jedis = null;
 		 try {
 			 jedis =  jedisPool.getResource();
-			//生成真正的key
+			 //生成真正的key
 			 String realKey  = prefix.getPrefix() + key;
+			 //减少
 			return  jedis.decr(realKey);
 		 }finally {
 			  returnToPool(jedis);
 		 }
 	}
 	
-	private <T> String beanToString(T value) {
+	
+	
+	/**
+	 * @param <T>
+	 * @param value  对象 转换成字符串
+	 * @return 
+	 */
+	private <T> String beanToString(T value) {//泛型
+		//是否为空
 		if(value == null) {
 			return null;
 		}
+		//各种情况
 		Class<?> clazz = value.getClass();
 		if(clazz == int.class || clazz == Integer.class) {
 			 return ""+value;
@@ -117,8 +137,16 @@ public class RedisService {
 		}
 	}
 
+	
+	/**
+	 * @param <T>
+	 * @param str
+	 * @param clazz 字符串转换成对象 
+	 * @return
+	 */
 	@SuppressWarnings("unchecked")
 	private <T> T stringToBean(String str, Class<T> clazz) {
+		//把字符串转换成 对应的类型
 		if(str == null || str.length() <= 0 || clazz == null) {
 			 return null;
 		}
@@ -129,10 +157,12 @@ public class RedisService {
 		}else if(clazz == long.class || clazz == Long.class) {
 			return  (T)Long.valueOf(str);
 		}else {
+			//bean
 			return JSON.toJavaObject(JSON.parseObject(str), clazz);
 		}
 	}
 
+	//返回连接到数据池
 	private void returnToPool(Jedis jedis) {
 		 if(jedis != null) {
 			 jedis.close();
