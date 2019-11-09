@@ -86,9 +86,9 @@ function doLogin(){
 	    //成功
 	    success:function(data){
 	    	layer.closeAll();//弹窗全部关闭
-	    	if(data.code == 0){
+	    	if(data.code == 200){
 	    		layer.msg("成功");//弹窗
-	    		//window.location.href="/goods/to_list";
+	    		window.location.href="/goods/goodslist";
 	    	}else{
 	    		layer.msg(data.msg);//弹窗
 	    	}
