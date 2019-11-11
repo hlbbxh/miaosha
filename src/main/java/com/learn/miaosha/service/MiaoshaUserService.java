@@ -52,13 +52,7 @@ public class MiaoshaUserService {
 					//return ErrorCodeMsg.PASSWORD_ERROR;//密码错误
 					throw new GlobalException(ErrorCodeMsg.PASSWORD_ERROR);
 				}else {
-					//返回真正业务逻辑的部分 到这里已经成功了  分布式session
-					String makeUuid = UUIDUtil.makeUuid();
-					redisService.set(MiaoshaUserKey.token, makeUuid, user);//存入redis缓存 前面两个是 key 组合的  后面的是value
-					Cookie cookie = new Cookie(Content.COOK_NAME_TOCK, makeUuid);
-					cookie.setMaxAge(MiaoshaUserKey.token.expireSeconds());//设置有效期
-					cookie.setPath("/");//网站的根目录
-					response.addCookie(cookie);//放入cook即可
+					addCookie(response,user);//放入cook信息
 					return true;
 				}
 			}else {
@@ -68,12 +62,33 @@ public class MiaoshaUserService {
 		}
 	}
 	
-	public MiaoshaUser getByToken(String tokenString) {
+	/**
+	 * @param tokenString 获取缓存的session的数据
+	 * @return
+	 */
+	public MiaoshaUser getByToken(HttpServletResponse response,String tokenString) {
 		if(StringUtils.isEmpty(tokenString)) {
 			return null;
 		}
 		MiaoshaUser miaoshaUser = redisService.get(MiaoshaUserKey.token,tokenString, MiaoshaUser.class);
+		//在获得到user对象的时候 进行重新设置  达到延长有效期的效果
+		if(null!=miaoshaUser) {//判断是否为空
+			addCookie(response, miaoshaUser);//重新设置
+		}
 		return miaoshaUser;
 	}
-
+	
+	/**
+	 * @param response 写入cook操作的抽象方法 response 和miaoshauser对象
+	 * @param miaoshaUser
+	 */
+	public void addCookie(HttpServletResponse response,MiaoshaUser miaoshaUser) {
+		//返回真正业务逻辑的部分 到这里已经成功了  分布式session
+		String makeUuid = UUIDUtil.makeUuid();
+		redisService.set(MiaoshaUserKey.token, makeUuid, miaoshaUser);//存入redis缓存 前面两个是 key 组合的  后面的是value
+		Cookie cookie = new Cookie(Content.COOK_NAME_TOCK, makeUuid);
+		cookie.setMaxAge(MiaoshaUserKey.token.expireSeconds());//设置有效期
+		cookie.setPath("/");//网站的根目录
+		response.addCookie(cookie);//放入cook即可
+	}
 }

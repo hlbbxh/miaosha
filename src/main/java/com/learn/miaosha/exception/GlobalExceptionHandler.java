@@ -19,6 +19,7 @@ public class GlobalExceptionHandler {
 	
 	@ExceptionHandler(value = Exception.class)//拦截那些异常
 	public Result<String> exceptionHandler(HttpServletRequest request,Exception e){
+		e.printStackTrace();//打印异常信息--------------------------------------------------------《《《《《《《
 		if(e instanceof GlobalException) {
 			//捕获异常 自己定义的异常
 			GlobalException globalException =(GlobalException) e;
