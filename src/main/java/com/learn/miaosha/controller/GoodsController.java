@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.learn.miaosha.entity.MiaoshaUser;
@@ -49,5 +50,34 @@ public class GoodsController {
  		model.addAttribute("miaoshaUser", miaoshaUser); 
  		return "goods_list";
     }
+ 	@RequestMapping("/to_detail/{goodsId}") //snowflake算法-->了解一下 
+ 	public String goodsDetil(Model model,MiaoshaUser miaoshaUser,@PathVariable("goodsId")long goodsId) {
+ 		GoodsVo goodvo = goodsService.getgoodsvobyId(goodsId);
+ 		
+ 		long starttime = goodvo.getStartDate().getTime();//开始时间
+ 		long endtime = goodvo.getEndDate().getTime();//结束时间
+ 		long nowtime = System.currentTimeMillis();//现在时间
+ 		
+ 		int remainSeconds = 0; //还要多久开始 倒计时
+ 		int miaoshaStatus = 0;//秒杀状态
+ 		
+ 		if(nowtime<starttime) {//开始时间小于当前时间 没开始
+ 			miaoshaStatus = 0;
+ 			remainSeconds = (int) ((starttime - nowtime)/1000);//还有多久开始 除 1000 是毫秒
+ 		}else if(nowtime>endtime) {//结束了
+ 			miaoshaStatus = 2;
+ 			remainSeconds = -1;
+ 		}else{//进行中
+ 			miaoshaStatus = 1;
+ 			remainSeconds = 0;//结束了 就没有这个时间了 
+ 		}
+ 		
+ 		model.addAttribute("remainSeconds", remainSeconds); 
+ 		model.addAttribute("miaoshaStatus", miaoshaStatus); 
+ 		
+ 		model.addAttribute("miaoshaUser", miaoshaUser); 
+ 		model.addAttribute("goodvo",goodvo);
+ 		return "goods_detail";
+ 	}
  	
 }

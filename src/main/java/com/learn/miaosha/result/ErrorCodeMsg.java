@@ -27,6 +27,8 @@ public class ErrorCodeMsg {
 	//订单模块 5004XX
 	
 	//秒杀模块 5005XX
+	public static ErrorCodeMsg STOCK_BUZU = new ErrorCodeMsg(50000500,"商品库存不足，已经秒杀完了");//参数 java String.format 方法
+	public static ErrorCodeMsg USER_EXIT = new ErrorCodeMsg(500005001,"您手速太快了，您已经秒杀了一件该商品");//参数 java String.format 方法
 	
 	
 	public ErrorCodeMsg(int code,String msg) {
