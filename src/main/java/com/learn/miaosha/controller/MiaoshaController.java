@@ -44,8 +44,8 @@ public class MiaoshaController {
  		if(null==miaoshaUser) {//是否登录
  			return "login";
  		}
- 		GoodsVo getgoodsvobyId = goodsService.getgoodsvobyId(goodsId);//获取秒杀商品
- 		Integer stockCount = getgoodsvobyId.getStockCount();//获取库存
+ 		GoodsVo miaoshaGoods = goodsService.getgoodsvobyId(goodsId);//获取秒杀商品
+ 		Integer stockCount = miaoshaGoods.getStockCount();//获取库存
  		//1.判断商品库存
  		if(stockCount <= 0) {
  			model.addAttribute("errorMsg", ErrorCodeMsg.STOCK_BUZU.getMsg());//没库存了
@@ -58,10 +58,10 @@ public class MiaoshaController {
  			return "miaosha_fail";
  		}
  		//3.减库存 下订单 写入秒杀订单   原子性的 事务
- 		OrderInfo orderinfo = miaoshaService.miaosha(miaoshaUser,getgoodsvobyId);
+ 		OrderInfo orderInfo = miaoshaService.miaosha(miaoshaUser,miaoshaGoods);
  		
- 		model.addAttribute("orderinfo",orderinfo);//订单
- 		model.addAttribute("getgoodsvobyId",getgoodsvobyId);//商品
+ 		model.addAttribute("orderInfo",orderInfo);//订单
+ 		model.addAttribute("miaoshaGoods",miaoshaGoods);//商品
  		model.addAttribute("miaoshaUser",miaoshaUser);//用户
  		return "order_detail";
     }
