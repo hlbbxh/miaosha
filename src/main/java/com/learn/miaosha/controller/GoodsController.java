@@ -94,11 +94,12 @@ public class GoodsController {
  	@ResponseBody
     public String goodslist_catch(HttpServletRequest request,HttpServletResponse response,Model model,MiaoshaUser miaoshaUser) {
 
- 		List<GoodsVo> listGoodsvo = goodsService.listGoodsvo();
  		String html = redisService.get(GoodsKey.getGoodsList,"",String.class);
  		if(!StringUtils.isEmpty(html)) {
  			return html;//直接返回
  		}
+ 		
+ 		List<GoodsVo> listGoodsvo = goodsService.listGoodsvo();
  		// 在渲染之前放入
  		model.addAttribute("listGoodsvo", listGoodsvo); 
  		model.addAttribute("miaoshaUser", miaoshaUser); 
