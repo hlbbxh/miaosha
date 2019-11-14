@@ -61,6 +61,9 @@ public class MiaoShaArgumentResolvers implements HandlerMethodArgumentResolver{
 	 */
 	private String getCookie(HttpServletRequest request, String cookName) {
 		Cookie[] cookies = request.getCookies();
+		if(null==cookies || cookies.length<=0) {
+			return null;
+		}
 		for(Cookie cookie:cookies) {
 			if(cookie.getName().equals(cookName)) {
 				return cookie.getValue();
