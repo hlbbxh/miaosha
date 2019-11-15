@@ -90,6 +90,14 @@ public class GoodsController {
  		return "goods_detail";
  	}
  	
+ 	/**
+ 	 * ============================================》》》》》》》》》》》优化值 页面缓存技术  和 goodslist 对比
+ 	 * @param request
+ 	 * @param response
+ 	 * @param model
+ 	 * @param miaoshaUser
+ 	 * @return
+ 	 */
  	@RequestMapping(value = "/goodslist_catch",produces = "text/html")//这个 方式
  	@ResponseBody
     public String goodslist_catch(HttpServletRequest request,HttpServletResponse response,Model model,MiaoshaUser miaoshaUser) {

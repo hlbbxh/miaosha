@@ -32,6 +32,40 @@ public class MiaoshaUserService {
 		return miaoshaUserDao.getById(id);
 	}
 	
+	// ===============================================》》》》》优化之 对象 缓存  登录的 用户对象放在 redis中
+	public MiaoshaUser getbyIdCatch(long id) {
+		//查询缓存
+		MiaoshaUser miaoshaUser = redisService.get(MiaoshaUserKey.getByMiaoshaUserid,""+id,MiaoshaUser.class);//上来先获取缓存
+		if(null!=miaoshaUser) {
+			return miaoshaUser;
+		}
+		//查不到 查询数据库
+		miaoshaUser = miaoshaUserDao.getById(id);
+		if(null!=miaoshaUser) {
+			redisService.set(MiaoshaUserKey.getByMiaoshaUserid,""+id, miaoshaUser);
+		}
+		//返回 注意有修改操作 要更新 redis 缓存
+		return miaoshaUser;
+	}
+	
+	public Boolean updatePassword(String token,long id,String passString) {
+		//获取
+		MiaoshaUser miaoshaUser = getById(id);//上面的方法获取
+		if(null==miaoshaUser) {
+			throw new GlobalException(ErrorCodeMsg.PHONE_NOTFOUND);
+		}
+		MiaoshaUser miaoshaUserNew = new MiaoshaUser();
+		miaoshaUserNew.setId(id);
+		miaoshaUserNew.setPassword(MD5Util.formPassToDBPass(passString,miaoshaUser.getSalt()));
+		//更新数据库
+		miaoshaUserDao.updateMiaoshaUser(miaoshaUserNew);//新的 对象 只有 密码 和条件 
+		//处理缓存
+		redisService.del(MiaoshaUserKey.getByMiaoshaUserid,""+id);//删除用户缓存
+		miaoshaUser.setPassword(miaoshaUserNew.getPassword());//老的user 重新set password 即可 
+		redisService.set(MiaoshaUserKey.token,token,miaoshaUser);//删除 登录影信息 或者更新 用户 信息   ----》》》bug token 获取不到
+		return true;
+	}
+	
 	//数据校验层
 	public Boolean login(HttpServletResponse response,LoginVo loginVo) {
 		if(null==loginVo) {
