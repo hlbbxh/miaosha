@@ -1,0 +1,142 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>商品详情</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <!-- jquery -->
+    <script type="text/javascript" src="/js/jquery.min.js"></script>
+    <!-- bootstrap -->
+    <link rel="stylesheet" type="text/css" href="/bootstrap/css/bootstrap.min.css" />
+    <script type="text/javascript" src="/bootstrap/js/bootstrap.min.js"></script>
+    <!-- jquery-validator -->
+    <script type="text/javascript" src="/jquery-validation/jquery.validate.min.js"></script>
+    <script type="text/javascript" src="/jquery-validation/localization/messages_zh.min.js"></script>
+    <!-- layer -->
+    <script type="text/javascript" src="/layer/layer.js"></script>
+    <!-- md5.js -->
+    <script type="text/javascript" src="/js/md5.min.js"></script>
+    <!-- common.js -->
+    <script type="text/javascript" src="/js/common.js"></script>
+</head>
+<body>
+
+<div class="panel panel-default">
+  <div class="panel-heading">秒杀商品详情</div>
+  <div class="panel-body">
+  	<!-- 判断 是不是没登录 -->
+  	<span id="userTip"> 您还没有登录，请登陆后再操作<br/></span>
+  	<span>没有收货地址的提示。。。</span>
+  </div>
+  <table class="table" id="goodslist">
+  	<tr>  
+        <td>商品名称</td>  
+        <td colspan="3" id="goodsName"></td> 
+     </tr>  
+     <tr>  
+        <td>商品图片</td>  
+        <td colspan="3"><img id="goodsImg" width="200" height="200" /></td>  
+     </tr>
+     <tr>  
+        <td>秒杀开始时间</td>  
+        <td id="startTime"></td><!-- 时间格式化 -->
+        <td>	
+        	<input type="hidden" id="remainSeconds"/>
+        	<span id="miaoshaTip">秒杀已结束</span>
+        </td>
+        <td>
+        	<form id="miaoshaForm" method="post" action="/miaosha/do_miaosha">
+        		<button class="btn btn-primary btn-block" type="submit" id="buyButton">立即秒杀</button>
+        		<input type="hidden" name="goodsId" id="goodsId" />
+        	</form>
+        </td>
+     </tr>
+     <tr>  
+        <td>商品原价</td>  
+        <td colspan="3" id="goodsPrice"></td>  
+     </tr>
+      <tr>  
+        <td>秒杀价</td>  
+        <td colspan="3" id="miaoshaPrice"></td>  
+     </tr>
+     <tr>  
+        <td>库存数量</td>  
+        <td colspan="3" id="stockCount"></td>  
+     </tr>
+  </table>
+</div>
+</body>
+<script>
+
+//请求数据 
+function getDetail(){
+	var goodsId = g_getQueryString("goodsId");//调用comm的js获取参数的值
+	$.ajax({
+		url:"/goods/goodDetail_static/"+goodsId,//参数拼接
+		type:"POST",
+		success:function(data){
+			if(data.code==200){
+				render(data.date); //获取数据 渲染页面
+			}else{
+				layer.msg(data.msg);
+			}
+		},
+		error:function(){
+			layer.msg("请求错误");
+		}
+	});
+	
+}
+
+//解析 ajax 数据 渲染页面
+function render(detail){
+	// 对应 goodDetailVo的四个属性
+	var miaoshaStatus = detail.miaoshaStatus;
+	var remainSeconds = detail.remainSeconds;
+	var goodsVo = detail.goodsVo;
+	var miaoshaUser = detail.miaoshaUser;
+	
+	if(miaoshaUser){
+		$("#userTip").hide();
+	}
+	$("#goodsName").text(goodsVo.goodsName);
+	$("#goodsImg").attr("src",goodsVo.goodsImg);
+	$("#startTime").text(new Date(goodsVo.startDate).format("yyyy-MM-dd hh:mm:ss"));
+	$("#remainSeconds").val(remainSeconds);
+	
+	$("#goodsId").val(goodsVo.id);
+	$("#goodsPrice").text(goodsVo.goodsPrice);
+	$("#miaoshaPrice").text(goodsVo.miaoshaPrice);
+	$("#stockCount").text(goodsVo.stockCount);//库存
+
+}
+
+$(function(){
+	getDetail();
+	countDown();  //这个 计时器  自己动不了  必须得手动执行才可以
+});
+
+//计时器
+function countDown(){
+	var remainSeconds = $("#remainSeconds").val();//当前时间// bug 时间 不能动 这里获取不到 
+	var timeout;
+	if(remainSeconds > 0){//秒杀还没开始，倒计时
+		$("#buyButton").attr("disabled", true);//没开始不能点
+		$("#miaoshaTip").html("秒杀倒计时："+remainSeconds+"秒");
+		timeout = setTimeout(function(){//定时器
+			$("#countDown").text(remainSeconds - 1);//同步
+			$("#remainSeconds").val(remainSeconds - 1);
+			countDown();
+		},1000);//一秒一次
+	}else if(remainSeconds == 0){//秒杀进行中
+		$("#buyButton").attr("disabled", false);//可以点
+		if(timeout){
+			clearTimeout(timeout);//取消定时器
+		}
+		$("#miaoshaTip").html("秒杀进行中");
+	}else{//秒杀已经结束
+		$("#buyButton").attr("disabled", true);//不可以点
+		$("#miaoshaTip").html("秒杀已经结束");
+	}
+}
+</script>
+</html>

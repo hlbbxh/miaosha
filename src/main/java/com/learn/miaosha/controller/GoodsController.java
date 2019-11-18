@@ -19,7 +19,9 @@ import org.thymeleaf.spring5.view.ThymeleafViewResolver;
 import com.learn.miaosha.entity.MiaoshaUser;
 import com.learn.miaosha.redis.GoodsKey;
 import com.learn.miaosha.redis.RedisService;
+import com.learn.miaosha.result.Result;
 import com.learn.miaosha.service.GoodsService;
+import com.learn.miaosha.vo.GoodsDetailVo;
 import com.learn.miaosha.vo.GoodsVo;
 @Controller
 @RequestMapping("/goods")
@@ -60,6 +62,13 @@ public class GoodsController {
  		model.addAttribute("miaoshaUser", miaoshaUser); 
  		return "goods_list";
     }
+ 	
+ 	/**
+ 	 * @param model 订单详情 下面有优化教程
+ 	 * @param miaoshaUser
+ 	 * @param goodsId
+ 	 * @return
+ 	 */
  	@RequestMapping("/to_detail/{goodsId}") //snowflake算法-->了解一下 
  	public String goodsDetil(Model model,MiaoshaUser miaoshaUser,@PathVariable("goodsId")long goodsId) {
  		GoodsVo goodvo = goodsService.getgoodsvobyId(goodsId);
@@ -90,7 +99,7 @@ public class GoodsController {
  		return "goods_detail";
  	}
  	
- 	/**
+ 	/** 直接把页面全部存在redis里面 使用WebContext进行数据渲染 但是还是要加载 页面信息
  	 * ============================================》》》》》》》》》》》优化值 页面缓存技术  和 goodslist 对比
  	 * @param request
  	 * @param response
@@ -120,4 +129,44 @@ public class GoodsController {
  		}
  		return html;
  	}
+ 	
+ 	/** 页面静态化 直接 ajxa 请求 后台 渲染页面 页面 静态化 前后端分离
+ 	 * @param request
+ 	 * @param response
+ 	 * @param model
+ 	 * @param miaoshaUser
+ 	 * @param goodsId
+ 	 * @return
+ 	 */
+ 	@RequestMapping(value = "/goodDetail_static/{goodsId}")//这个 方式
+ 	@ResponseBody
+    public Result<GoodsDetailVo> goodDetail_static(HttpServletRequest request,HttpServletResponse response,Model model,MiaoshaUser miaoshaUser,@PathVariable("goodsId")long goodsId) {
+ 		GoodsVo goodsVo = goodsService.getgoodsvobyId(goodsId);//获取数据
+ 		
+ 		long starttime = goodsVo.getStartDate().getTime();//开始时间
+ 		long endtime = goodsVo.getEndDate().getTime();//结束时间
+ 		long nowtime = System.currentTimeMillis();//现在时间
+ 		
+ 		int remainSeconds = 0; //还要多久开始 倒计时
+ 		int miaoshaStatus = 0;//秒杀状态
+ 		
+ 		if(nowtime<starttime) {//开始时间小于当前时间 没开始
+ 			miaoshaStatus = 0;
+ 			remainSeconds = (int) ((starttime - nowtime)/1000);//还有多久开始 除 1000 是毫秒
+ 		}else if(nowtime>endtime) {//结束了
+ 			miaoshaStatus = 2;
+ 			remainSeconds = -1;
+ 		}else{//进行中
+ 			miaoshaStatus = 1;
+ 			remainSeconds = 0;//结束了 就没有这个时间了 
+ 		}
+ 		//还需要 user 对象
+ 		GoodsDetailVo detailVo = new GoodsDetailVo();
+ 		detailVo.setGoodsVo(goodsVo);//商品信息
+ 		detailVo.setMiaoshaUser(miaoshaUser); //用户对象
+ 		detailVo.setRemainSeconds(remainSeconds);//还有多久
+ 		detailVo.setMiaoshaStatus(miaoshaStatus);//秒杀状态
+ 		return Result.success(detailVo);//返回
+ 	}
+ 	
 }

@@ -31,10 +31,10 @@ public class Result<T>{
 	}
 	
 	//构造方法  成功的时候调用  只需要data即可
-	private Result(T data){
+	private Result(T date){
 		this.code=200;
 		this.msg="success";
-		this.date=data;
+		this.date=date;
 	}	
 	//失败的时候调用
 	private Result(ErrorCodeMsg errorCodeMsg) {
@@ -49,6 +49,7 @@ public class Result<T>{
 	 * 成功时候的调用
 	 * */
 	public static <T> Result<T> success(T data){
+		
 		return new  Result<T>(data);//不通的参数对应不同的构造方法 
 	}
 	
