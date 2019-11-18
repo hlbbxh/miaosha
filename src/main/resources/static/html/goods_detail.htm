@@ -45,7 +45,7 @@
         </td>
         <td>
         	<form id="miaoshaForm" method="post" action="/miaosha/do_miaosha">
-        		<button class="btn btn-primary btn-block" type="submit" id="buyButton">立即秒杀</button>
+        		<button class="btn btn-primary btn-block" type="submit" id="buyButton" onclick="doMiaosha()">立即秒杀</button>
         		<input type="hidden" name="goodsId" id="goodsId" />
         	</form>
         </td>
@@ -137,6 +137,28 @@ function countDown(){
 		$("#buyButton").attr("disabled", true);//不可以点
 		$("#miaoshaTip").html("秒杀已经结束");
 	}
+}
+
+//秒杀 商品 生成订单
+function doMiaosha(){
+	$.ajax({
+		url:"/miaosha/do_miaosha_static",//进行秒杀
+		type:"POST",
+		data:{
+			goodsId:$("#goodsId").val(),
+		},
+		success:function(data){
+			if(data.code == 0){
+				window.location.href="/html/order_detail.htm?orderId="+data.data.id;//传递参数 参数为 订单id 到那边进行参数查询
+			}else{
+				layer.msg(data.msg);
+			}
+		},
+		error:function(){
+			layer.msg("客户端请求有误");
+		}
+	});
+	
 }
 </script>
 </html>

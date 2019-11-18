@@ -11,6 +11,7 @@ public class ErrorCodeMsg {
 	//通用异常
 	public static ErrorCodeMsg SUCCESS = new ErrorCodeMsg(200,"success");
 	public static ErrorCodeMsg SERVER_Error = new ErrorCodeMsg(500500,"服务器异常");
+	public static ErrorCodeMsg SESSION_Error = new ErrorCodeMsg(500501,"登录失败，或者session失效");
 	
 	//登录模块 5002XX
 	public static ErrorCodeMsg SESSION_ERROR = new ErrorCodeMsg(500500,"Session不存在或者已经失效");
@@ -25,6 +26,7 @@ public class ErrorCodeMsg {
 	//商品模块 5003XX
 	
 	//订单模块 5004XX
+	public static ErrorCodeMsg ORDER_NULL = new ErrorCodeMsg(5100001,"订单不存在");
 	
 	//秒杀模块 5005XX
 	public static ErrorCodeMsg STOCK_BUZU = new ErrorCodeMsg(50000500,"商品库存不足，已经秒杀完了");//参数 java String.format 方法
