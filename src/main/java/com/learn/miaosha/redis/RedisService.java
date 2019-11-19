@@ -90,7 +90,7 @@ public class RedisService {
 			//生成真正的key
 			 String realKey  = prefix.getPrefix() + key;
 			 //添加 123
-			Long resultLong =  jedis.del(key);
+			Long resultLong =  jedis.del(realKey);
 			return resultLong>0;
 		 }finally {
 			  returnToPool(jedis);
