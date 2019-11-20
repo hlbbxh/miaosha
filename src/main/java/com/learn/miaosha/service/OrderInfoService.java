@@ -40,11 +40,11 @@ public class OrderInfoService {
 		orderInfo.setOrderChannel(1);//渠道 
 		orderInfo.setStatus(0);
 		orderInfo.setUserId(miaoshaUser.getId());//用户
-		long orderInfoid = orderInfoDao.addOrderinfo(orderInfo);//插入普通订单  //这里有一个1问题 每次返回的 都是一 mmp
-		
+		orderInfoDao.addOrderinfo(orderInfo);//插入普通订单  //这里有一个1问题 每 次返回的 都是一 mmp
+		// 注意 插入成功 会吧id直接放入 orderInfo  从 orderInfo 里面获取   /// bug 解决 
 		MiaoshaOrder miaoshaOrder = new MiaoshaOrder();
 		miaoshaOrder.setGoodsId(goodsVo.getId());//商品id
-		miaoshaOrder.setOrderId(orderInfoid);//订单id
+		miaoshaOrder.setOrderId(orderInfo.getId());//订单id
 		miaoshaOrder.setUserId(miaoshaUser.getId());
 		int resultcount = miaoshaOrderService.createMiaosOrder(miaoshaOrder);
 		
