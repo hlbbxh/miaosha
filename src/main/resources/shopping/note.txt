@@ -1,0 +1,66 @@
+1.表结构（仔细了解）
+	(1)用户表：mmall_user 
+		设置唯一索引：UNIQUE KEY `user_name_unique` (`username`) USING BTREE 
+		密码：md5加密，秒杀学过了
+		PRIMARY KEY (`id`) 主键id
+	(2)分类表：mmall_category
+		id和parent_id这两个，无限层级递归的方式，parent_id为0时代表是根节点
+	(3)产品表：mmall_product
+		category_id 分类id,对应mmall_category表的主键
+		text文本类型，比varchar大的多
+		decimal(20,2)20代表小数总位数，2是小数位数，所以整数位数是18
+	(4)购物车表：mmall_cart
+		购物车持久化
+		添加了userid的索引，要经常用，提高查询效率 KEY `user_id_index` (`user_id`) USING BTREE
+	(5)支付信息表：mmall_pay_info
+	(6)订单表：mmall_order
+		订单号也是唯一索引 UNIQUE KEY `order_no_index` (`order_no`) USING BTREE
+		status 订单状态:0-已取消-10-未付款，20-已付款，40-已发货，50-交易成功，60-交易关闭
+	(7)订单明细表：mmall_order_item
+		订单表的索引：KEY `order_no_index` (`order_no`) USING BTREE,
+		组合索引：user_id，order_no 传递过来两个餐参数  KEY `order_no_user_id_index` (`user_id`,`order_no`) USING BTREE
+	(8)收货地址表：mmall_shipping
+
+2.导入了一些jar
+	可以直接在pom文件中查看，有分割线
+	初始化项目
+
+3.配置自动生成实体类的mybatis generator 文件
+	配置xml 配置属性文件 eclipse 要插件 ieda 需要 导入 jar的build
+	然后鼠标右键 generatorConfig.xml 文件  run as   mybatis generator 即可生成
+	<properties resource="application.properties"></properties>  <!-- 注意这里配置的是 读取的属性文件 -->
+	配置文件注意事项：
+		1.注意资源文件的配置，数据库是否选择正确
+		2.配置文件的jar包选择 windows 需要有双反斜杠
+			db.driverLocation=D:\\windows_dev_tool\\mavenRep\\mysql\\mysql-connector-java\\8.0.17\\mysql-connector-java-8.0.17.jar
+		3.关于生成资源文件的配置，这是springboot的项目的资源生成方式
+			<javaModelGenerator targetPackage="com.learn.mmall.entity" targetProject="miaosha"> 实体
+			<sqlMapGenerator targetPackage="mappers" targetProject="miaosha\src\main\resources"> mapper
+			<javaClientGenerator type="XMLMAPPER" targetPackage="com.learn.mmall.dao" targetProject="miaosha"> dao层
+
+
+4.每张表都有create_time 和update_time 我们吧这两个时间设置成now()mysql的内置函数 交给数据库完成
+	这样的好处 就是可以还原数据库进行操作 修改 mapper 文件 吧这些时间 直接搞成 mysql 内置函数
+
+5.springmvc配置了一大堆的参数，注意配置文件，包扫描什么的
+	springboot 就不需要了，这里就进行 忽略啦 还有 就是logback的配置 
+	springboot集成 就方便一点
+	logerback：springmcv的jar  springboiot 可能要用其他的
+		    <dependency>
+		      <groupId>ch.qos.logback</groupId>
+		      <artifactId>logback-classic</artifactId>
+		      <version>1.1.2</version>
+		      <scope>compile</scope>
+		    </dependency>
+		    <dependency>
+		      <groupId>ch.qos.logback</groupId>
+		      <artifactId>logback-core</artifactId>
+		      <version>1.1.2</version>
+		      <scope>compile</scope>
+		    </dependency>
+
+6.mybatis排坑记录，springboot版本
+	首先注意 @mapper是否写了，然后注意mapper扫描，在springboot启动类上
+	最后注意属性文件上的配置是否配置了classpath：mapper.xml
+	mybatis.mapper-locations=classpath:mappers/*.xml
+		
