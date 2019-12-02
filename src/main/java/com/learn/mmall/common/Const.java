@@ -26,6 +26,10 @@ public class Const {
         String LIMIT_NUM_SUCCESS = "LIMIT_NUM_SUCCESS";
     }
 
+    /**
+     * @author DELL 小技巧 高枚举又很繁重 就可以搞这个了
+     * 
+     */
     public interface Role{
         int ROLE_CUSTOMER = 0; //普通用户
         int ROLE_ADMIN = 1;//管理员

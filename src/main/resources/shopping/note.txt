@@ -63,4 +63,14 @@
 	首先注意 @mapper是否写了，然后注意mapper扫描，在springboot启动类上
 	最后注意属性文件上的配置是否配置了classpath：mapper.xml
 	mybatis.mapper-locations=classpath:mappers/*.xml
-		
+	
+7.注意mapper.xml配置文件的select语句 可以用include 但是要记得有select
+	  <select id="selectlogin" resultMap="BaseResultMap" parameterType="map">
+	  		select
+	  		<include refid="Base_Column_List" />
+		    from mmall_user
+		    where username = #{username}
+		    and password = #{password}
+	  </select>
+	  
+
