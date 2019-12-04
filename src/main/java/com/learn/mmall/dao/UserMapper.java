@@ -27,6 +27,13 @@ public interface UserMapper {
     //查询email是否存在
     int checkUserEmail(String email);
     
+    String selectQuestionByUserName(@Param("username")String username);
     
+    int checkanswer(@Param("username")String username,@Param("question")String question,@Param("answer")String answer);
+
+    int updatePasswordByusername(@Param("username")String username,@Param("password")String password);
     
+    int checnPassword(@Param("password")String password,@Param("userid")Integer userid);
+    
+    int checkEmailUserByUserid(@Param("email")String email,@Param("userid")Integer userid);
 }

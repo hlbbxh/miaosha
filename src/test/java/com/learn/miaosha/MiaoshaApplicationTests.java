@@ -11,6 +11,12 @@ public class MiaoshaApplicationTests {
 
 	@Test
 	public void contextLoads() {
+		
 	}
-
+	
+//	@Test
+//	public void testMpMapper() {
+//		List<User> selectList = usermappermp.selectList(null);
+//		selectList.forEach(System.out::println);
+//	}
 }

@@ -166,4 +166,30 @@
 	    select count(1) from mmall_user
 	    where email = #{email}
   </select>
+  <select id="selectQuestionByUserName" resultType="string" parameterType="string">
+	    select question from mmall_user
+	    where username = #{username}
+  </select>
+  <select id="checkanswer" resultType="int" parameterType="map"><!-- 多个参数需要用map -->
+	    select count(1) from mmall_user
+	    where username = #{username}
+	    and question = #{question}
+	    and answer = #{answer}
+  </select>
+  <update id="updatePasswordByusername" parameterType="map">
+  		update mmall_user 
+  		set password = #{password},update_time = now()
+  		where username =#{username}
+  </update>
+  <select id="checnPassword" resultType="int" parameterType="map">
+  		select count(1)
+  		from mmall_user
+  		where id= #{userid}
+  		and password = #{password}
+  </select>
+  <select id="checkEmailUserByUserid" resultType="int" parameterType="map">
+	    select count(1) from mmall_user
+	    where email = #{email}
+	    and id != #{userid}
+  </select>
 </mapper>
