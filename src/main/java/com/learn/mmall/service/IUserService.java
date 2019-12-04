@@ -12,4 +12,5 @@ public interface IUserService {
 	ServerResponse<String> restPassword(String username,String newpassword,String forgetToken);
 	ServerResponse<User> updateInfo(User user);
 	ServerResponse<User> getuserinfo(Integer userid);
+	ServerResponse checkAdmin(User user);
 }

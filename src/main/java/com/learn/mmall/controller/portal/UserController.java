@@ -190,5 +190,4 @@ public class UserController {
 		return getuserinfo;
 	}
 	
-	
 }
